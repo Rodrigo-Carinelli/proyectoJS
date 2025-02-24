@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Parrilla Simoca</title>
+</head>
+<body>
+
+    <!-- Encabezado -->
+    <header>
+        <h1>Parrilla Simoca</h1>
+        <div>
+            <ul>
+                <li><a href="index.html">Formulario</a></li>
+                <li><a href="#">Calculadora ROI</a></li>
+                <li><a href="presupuesto.html">Simulador de Presupuesto</a></li>
+                <li><a href="eventos.html">Eventos</a></li>
+            </ul>
+        </div>
+        <h1>Calculadora de retorno de inversion</h1>
+    </header>
+
+    <main>
+        <form id="roiForm">
+            <label for="ganancias">Ganancias Totales ($):</label>
+            <input type="number" id="ganancias" required>
+
+            <label for="inversion">Inversión Total ($):</label>
+            <input type="number" id="inversion" required>
+
+            <button type="button" onclick="calcularROI()">Calcular ROI</button>
+        </form>
+
+        <div id="resultado" class="result" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <p>© 2024 Parrilla Simoca. Rodrigo Carinelli.</p>
+        <p>Contacto: Rodrigo.Carinelli@hotmail.com | Tel: 1132381612</p>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+</body>
+</html>
