@@ -1,81 +1,3 @@
-/*
-window.addEventListener('DOMContentLoaded', () => {
-    
-    const dishInput = document.getElementById('dishInput');
-    const addDishButton = document.getElementById('addDishButton');
-    const menuList = document.getElementById('menuList');
-
-    
-    function loadMenu() {
-    const menu = JSON.parse(localStorage.getItem('menu')) || [];
-    menuList.innerHTML = '';
-    menu.forEach((dish, index) => renderDish(dish, index));
-    }
-
-    
-    function saveMenu(menu) {
-    localStorage.setItem('menu', JSON.stringify(menu));
-    }
-
-    
-    function renderDish(dish, index) {
-    const li = document.createElement('li');
-    li.className = dish.available ? 'available' : 'unavailable';
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = dish.available;
-    checkbox.addEventListener('change', () => toggleDishAvailability(index));
-
-    const span = document.createElement('span');
-    span.textContent = dish.name;
-
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Eliminar';
-    deleteButton.addEventListener('click', () => deleteDish(index));
-
-    li.appendChild(checkbox);
-    li.appendChild(span);
-    li.appendChild(deleteButton);
-    menuList.appendChild(li);
-    }
-
-    
-    function addDish() {
-    const dishName = dishInput.value.trim();
-    if (dishName === '') {
-        alert('Por favor, ingresa un plato.');
-        return;
-    }
-
-    const menu = JSON.parse(localStorage.getItem('menu')) || [];
-    menu.push({ name: dishName, available: true });
-    saveMenu(menu);
-    renderDish({ name: dishName, available: true }, menu.length - 1);
-    dishInput.value = '';
-    }
-
-    
-    function toggleDishAvailability(index) {
-    const menu = JSON.parse(localStorage.getItem('menu')) || [];
-    menu[index].available = !menu[index].available;
-    saveMenu(menu);
-    loadMenu();
-    }
-
-    
-    function deleteDish(index) {
-    const menu = JSON.parse(localStorage.getItem('menu')) || [];
-    menu.splice(index, 1);
-    saveMenu(menu);
-    loadMenu();
-    }
-
-    
-    addDishButton.addEventListener('click', addDish);
-    loadMenu(); 
-});
-*/
 
 document.addEventListener("DOMContentLoaded", () => {
     const dishInput = document.getElementById("dishInput");
@@ -88,10 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMenu();
 });
 
-// 🟢 Función para cargar el menú desde localStorage o una API
+// 🟢 Función para cargar el menú desde `menu.json`
 function loadMenu() {
-    const menu = JSON.parse(localStorage.getItem("menu")) || [];
-    renderMenu(menu);
+    fetch("menu.json")
+        .then(response => response.json())
+        .then(data => {
+            saveMenu(data); // Guarda en localStorage
+            renderMenu(data);
+        })
+        .catch(() => mostrarMensaje("Error al cargar el menú", "error"));
 }
 
 // 🟢 Función para guardar el menú en localStorage
@@ -133,7 +60,7 @@ function addDish() {
     const dishName = dishInput.value.trim();
 
     if (dishName === "") {
-        mostrarMensaje("Por favor, ingresa un plato.");
+        mostrarMensaje("Por favor, ingresa un plato.", "error");
         return;
     }
 
@@ -145,15 +72,14 @@ function addDish() {
     renderMenu(menu);
     dishInput.value = "";
 
-    // Simulación de API para guardar el plato
     fetch("https://jsonplaceholder.typicode.com/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newDish)
     })
     .then(response => response.json())
-    .then(data => mostrarMensaje(`Plato "${dishName}" agregado con éxito. ID: ${data.id}`))
-    .catch(() => mostrarMensaje("Error al agregar el plato."));
+    .then(data => mostrarMensaje(`Plato "${dishName}" agregado con éxito. ID: ${data.id}`, "success"))
+    .catch(() => mostrarMensaje("Error al agregar el plato.", "error"));
 }
 
 // 🟢 Función para cambiar la disponibilidad de un plato
@@ -172,13 +98,17 @@ function deleteDish(index) {
     saveMenu(menu);
     renderMenu(menu);
 
-    // Simulación de API para eliminar un plato
     fetch("https://jsonplaceholder.typicode.com/posts/1", { method: "DELETE" })
-    .then(() => mostrarMensaje(`Plato "${deletedDish}" eliminado con éxito.`))
-    .catch(() => mostrarMensaje("Error al eliminar el plato."));
+    .then(() => mostrarMensaje(`Plato "${deletedDish}" eliminado con éxito.`, "success"))
+    .catch(() => mostrarMensaje("Error al eliminar el plato.", "error"));
 }
 
-// 🟢 Función para mostrar mensajes en la UI
-function mostrarMensaje(mensaje) {
-    console.log(mensaje); // Se puede cambiar por una notificación en la UI si es necesario
+// 🟢 Función para mostrar mensajes en la UI con SweetAlert2
+function mostrarMensaje(mensaje, tipo = "success") {
+    Swal.fire({
+        title: tipo === "error" ? "Error" : "Éxito",
+        text: mensaje,
+        icon: tipo
+    });
 }
+

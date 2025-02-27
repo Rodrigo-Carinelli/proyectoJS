@@ -1,0 +1,6 @@
+[
+    { "name": "Asado", "available": true },
+    { "name": "Milanesa", "available": true },
+    { "name": "Ensalada César", "available": true },
+    { "name": "Papas Fritas", "available": false }
+]
